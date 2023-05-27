@@ -1,10 +1,10 @@
 import './App.css';
-import {useState} from "react";
+import { useState } from "react";
 
 export default function App() {
     const [index, setIndex] = useState(0);
 
-    console.log('first ' + index);
+    console.log('first1 ' + index);
     function nameChangeHandle() {
         setIndex(index + 1);
         setIndex(index - 1);
