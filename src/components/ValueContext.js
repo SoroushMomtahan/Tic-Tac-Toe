@@ -1,54 +1,64 @@
 import { createContext, useRef, useState } from "react"
 
-export const ValueContext = createContext([]);
-export const ValueHandle = createContext(null);
-export const MovementHandle = createContext(null);
+export const BoxValueContext = createContext([]);
+export const BoxClickHandleContext = createContext(null);
+export const UndoClickHandleContext = createContext(null);
 
 export default function ValueProvider({ children }) {
 
-    const [flag, setFlag] = useState(true);
-    const [boxContent, setBoxContent] = useState(['Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z']);
+    const [boxContent, setBoxContent] = useState(['', '', '', '', '', '', '', '', '']);
+
     const boxSeqRef = useRef([]);
 
-    function handleValue(boxIndex) {
-        if (boxContent[boxIndex] === 'Z') {
-            boxSeqRef.current = [...boxSeqRef.current, boxIndex];
-            if (flag) {
-                let newBoxContent = boxContent.map((value, index) => {
-                    if (index === boxIndex) {
-                        return 'X'
+    function handleBoxClick(id) {
+        if (boxContent[id] === '') {
+
+            let newBoxContent = boxContent.map((value, index) => {
+                if (index === id) {
+                    return 'X';
+                } else {
+                    return value;
+                }
+            });
+
+            let counter = 0;
+            let pcId = -1;
+            br: while (counter < 9) {
+                let pcRandomId = Math.floor(Math.random() * 9);
+                for (pcRandomId in newBoxContent) {
+                    if (newBoxContent[pcRandomId] === '') {
+                        newBoxContent[pcRandomId] = 'O'
+                        pcId = Number(pcRandomId);
+                        break br;
                     } else {
-                        return value;
+                        counter++;
                     }
-                });
-                setBoxContent(newBoxContent);
-            } else {
-                let newBoxContent = boxContent.map((value, index) => {
-                    if (index === boxIndex) {
-                        return 'O'
-                    } else {
-                        return value;
-                    }
-                });
-                setBoxContent(newBoxContent);
+                }
             }
-            setFlag(!flag);
+            setBoxContent(newBoxContent);
+
+            boxSeqRef.current = [...boxSeqRef.current, id, pcId];
+
         }
-        handleWhoWin();
+        calcuWinner();
     }
-    function handleMovement() {
+    function handleUndoClick() {
 
         let newBoxContent = boxContent.map((value, index) => {
             if (boxSeqRef.current[boxSeqRef.current.length - 1] === index) {
-                return 'Z';
+                return '';
             } else {
                 return value;
             }
         });
-        boxSeqRef.current.pop();
+
         setBoxContent(newBoxContent);
+
+        boxSeqRef.current.pop();
+
     }
-    function handleWhoWin() {
+    function calcuWinner() {
+
         if (boxSeqRef.current[0] === 'X' && boxSeqRef.current[1] === 'X' && boxSeqRef.current[2] === 'X') {
             console.log('x Win');
             // setBoxContent([]);
@@ -58,12 +68,23 @@ export default function ValueProvider({ children }) {
     }
 
     return (
-        <ValueContext.Provider value={boxContent}>
-            <ValueHandle.Provider value={(boxIndex) => handleValue(boxIndex)}>
-                <MovementHandle.Provider value={handleMovement}>
+        <BoxValueContext.Provider value={boxContent}>
+            <BoxClickHandleContext.Provider value={(id) => handleBoxClick(id)}>
+                <UndoClickHandleContext.Provider value={handleUndoClick}>
                     {children}
-                </MovementHandle.Provider>
-            </ValueHandle.Provider>
-        </ValueContext.Provider>
+                </UndoClickHandleContext.Provider>
+            </BoxClickHandleContext.Provider>
+        </BoxValueContext.Provider>
     );
 }
+
+const winnerStatus = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8]
+];

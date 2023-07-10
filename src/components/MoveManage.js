@@ -1,12 +1,12 @@
 import { useContext } from "react";
-import { MovementHandle } from "./ValueContext";
+import { UndoClickHandleContext } from "./ValueContext";
 
 export default function MoveManage() {
 
-    const handleMovement = useContext(MovementHandle);
+    const undoClickHandle = useContext(UndoClickHandleContext);
     return (
         <div>
-            <button onClick={handleMovement}>Undo</button>
+            <button onClick={undoClickHandle}>Undo</button>
         </div>
     );
 }

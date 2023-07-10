@@ -3,27 +3,28 @@ import Row from './components/Row';
 import Box from './components/Box';
 import MoveManage from './components/MoveManage';
 import ValueProvider from './components/ValueContext';
+import './index.css'
 
 export default function App() {
 
     return (
-        <div>
+        <div className='flex justify-center'>
             <ValueProvider>
                 <Boxes>
                     <Row>
-                        <Box boxIndex={0} />
-                        <Box boxIndex={1} />
-                        <Box boxIndex={2} />
+                        <Box id={0} />
+                        <Box id={1} />
+                        <Box id={2} />
                     </Row>
                     <Row>
-                        <Box boxIndex={3} />
-                        <Box boxIndex={4} />
-                        <Box boxIndex={5} />
+                        <Box id={3} />
+                        <Box id={4} />
+                        <Box id={5} />
                     </Row>
                     <Row>
-                        <Box boxIndex={6} />
-                        <Box boxIndex={7} />
-                        <Box boxIndex={8} />
+                        <Box id={6} />
+                        <Box id={7} />
+                        <Box id={8} />
                     </Row>
                     <MoveManage />
                 </Boxes>
