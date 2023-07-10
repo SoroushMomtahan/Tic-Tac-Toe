@@ -8,6 +8,7 @@ export default function MoveManage() {
     return (
         <div>
             <button onClick={undoClickHandle}>Undo</button>
+            {' '}
             <button onClick={resetClickHandle}>Reset</button>
         </div>
     );
