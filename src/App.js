@@ -26,8 +26,8 @@ export default function App() {
                         <Box id={7} />
                         <Box id={8} />
                     </Row>
-                    <MoveManage />
                 </Boxes>
+                <MoveManage />
             </ValueProvider>
         </div>
     );

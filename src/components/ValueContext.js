@@ -3,15 +3,20 @@ import { createContext, useRef, useState } from "react"
 export const BoxValueContext = createContext([]);
 export const BoxClickHandleContext = createContext(null);
 export const UndoClickHandleContext = createContext(null);
+export const ResetClickHandleContext = createContext(null);
+export const WinnerContext = createContext('');
 
 export default function ValueProvider({ children }) {
 
     const [boxContent, setBoxContent] = useState(['', '', '', '', '', '', '', '', '']);
+    const [winner, setWinner] = useState('');
+
 
     const boxSeqRef = useRef([]);
 
+
     function handleBoxClick(id) {
-        if (boxContent[id] === '') {
+        if (boxContent[id] === '' && winner === '') {
 
             let newBoxContent = boxContent.map((value, index) => {
                 if (index === id) {
@@ -35,12 +40,13 @@ export default function ValueProvider({ children }) {
                     }
                 }
             }
-            setBoxContent(newBoxContent);
+
+            calcuWinner(newBoxContent);
 
             boxSeqRef.current = [...boxSeqRef.current, id, pcId];
-
+            setBoxContent(newBoxContent);
         }
-        calcuWinner();
+
     }
     function handleUndoClick() {
 
@@ -53,25 +59,40 @@ export default function ValueProvider({ children }) {
         });
 
         setBoxContent(newBoxContent);
-
+        setWinner('');
         boxSeqRef.current.pop();
 
     }
-    function calcuWinner() {
+    function calcuWinner(newBoxContent) {
 
-        if (boxSeqRef.current[0] === 'X' && boxSeqRef.current[1] === 'X' && boxSeqRef.current[2] === 'X') {
-            console.log('x Win');
-            // setBoxContent([]);
-        } else {
-
+        for (const arr of winnerStatus) {
+            let winnerIsX = arr.every((value) => newBoxContent[value] === 'X');
+            let winnerIsO = arr.every((value) => newBoxContent[value] === 'O');
+            if (winnerIsX) {
+                setWinner('X');
+                break;
+            } else if (winnerIsO) {
+                setWinner('O');
+                break;
+            }
         }
+
+    }
+    function handleResetGame() {
+        setBoxContent(['', '', '', '', '', '', '', '', '']);
+        boxSeqRef.current = [];
+        setWinner('');
     }
 
     return (
         <BoxValueContext.Provider value={boxContent}>
             <BoxClickHandleContext.Provider value={(id) => handleBoxClick(id)}>
                 <UndoClickHandleContext.Provider value={handleUndoClick}>
-                    {children}
+                    <ResetClickHandleContext.Provider value={handleResetGame}>
+                        <WinnerContext.Provider value={winner}>
+                            {children}
+                        </WinnerContext.Provider>
+                    </ResetClickHandleContext.Provider>
                 </UndoClickHandleContext.Provider>
             </BoxClickHandleContext.Provider>
         </BoxValueContext.Provider>
@@ -88,3 +109,4 @@ const winnerStatus = [
     [1, 4, 7],
     [2, 5, 8]
 ];
+// const winnerStatus = [1, 4, 7];
